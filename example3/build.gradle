@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
-sourceSets.main.java {
-	srcDir 'src'
+sourceSets.main {
+	java.srcDir 'src'
 }
 
 repositories {
@@ -9,31 +9,33 @@ repositories {
 }
 
 dependencies {
-	compile 'apache:commons'
+	compile 'org.apache.commons:commons-lang3:3.1'
 
 
 }
 
-task genCode() {
-	def messageFile = new File('gen/message.txt')
-	def message = []
-	messageFile.eachLine { line -> message << line }
-
+task genCode {
 	def code = new File('build/gen/Hello.java')
-	code.parentFile.mkdirs()
-	code << "public class Hello {\n"
-	code << "	public static String getMessage() {\n"
-	code << "		return \"${message.join()}\"\n";
-	code << "	}\n"
-	code << "}\n"
-
+	def messageFile = new File('gen/message.txt')
 	outputs.dir code.parentFile
+	
+	doLast {
+		def message = []
+		messageFile.eachLine { line -> message << line }
+
+		code.parentFile.mkdirs()
+		code << "public class Hello {\n"
+		code << "	public static String getMessage() {\n"
+		code << "		return \"${message.join()}\";\n";
+		code << "	}\n"
+		code << "}"
+	}
 }
 
-sourceSets.main.java.source genCode.outputs.dir
+compileJava.source genCode.outputs.files
 
 task sayHello(type: JavaExec) {
-	classpath configurations.runtime
-	main = Hello
+	classpath sourceSets.main.runtimeClasspath
+	main = 'PrintOut'
 }
 
