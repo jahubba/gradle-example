@@ -1,41 +1,18 @@
-apply plugin: 'java'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse-wtp'
 
-sourceSets.main {
-	java.srcDir 'src'
+    repositories {
+       mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.8.2'
+    }
+
+    version = '1.0'
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
 }
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	compile 'org.apache.commons:commons-lang3:3.1'
-
-
-}
-
-task genCode {
-	def code = new File('build/gen/Hello.java')
-	def messageFile = new File('gen/message.txt')
-	outputs.dir code.parentFile
-	
-	doLast {
-		def message = []
-		messageFile.eachLine { line -> message << line }
-
-		code.parentFile.mkdirs()
-		code << "public class Hello {\n"
-		code << "	public static String getMessage() {\n"
-		code << "		return \"${message.join()}\";\n";
-		code << "	}\n"
-		code << "}"
-	}
-}
-
-compileJava.source genCode.outputs.files
-
-task sayHello(type: JavaExec) {
-	classpath sourceSets.main.runtimeClasspath
-	main = 'PrintOut'
-}
-

@@ -1,0 +1,40 @@
+apply plugin: 'java'
+
+sourceSets.main {
+	java.srcDir 'src'
+}
+
+repositories {
+	mavenCentral()
+}
+
+task genCode {
+	def messageFile = new File('gen/message.txt')
+	def code = new File('build/gen/Hello.java')
+	
+	outputs.dir code.parentFile
+	
+	doLast {
+		def message = []
+		messageFile.eachLine { line -> message << line }
+
+		code.exists() ? code.delete() : code.parentFile.mkdirs()
+		code << "public class Hello {\n"
+		code << "	public static String getMessage() {\n"
+		code << "		return \"${message.join()}\";\n";
+		code << "	}\n"
+		code << "}"
+	}
+}
+
+compileJava.source genCode.outputs.files
+
+task sayHello(type: JavaExec) {
+	classpath sourceSets.main.runtimeClasspath
+	main = 'PrintOut'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.2'
+    jarFile = 'wrapper/wrapper.jar'
+}

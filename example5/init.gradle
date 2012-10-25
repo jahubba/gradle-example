@@ -1,0 +1,13 @@
+allprojects {
+	configurations {
+		compile.incoming.afterResolve {
+			def hibernateDependencies = compile.resolvedConfiguration.resolvedArtifacts.findAll {
+				it.moduleVersion.id.group == "org.hibernate"
+			}
+
+			if (hibernateDependencies) {
+				throw new Exception("Found hibernate dependencies! - ${hibernateDependencies*.moduleVersion*.id}")
+			}
+		}
+	}
+}

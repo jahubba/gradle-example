@@ -14,7 +14,7 @@ task welcome(overwrite: true) << {
 ---------------------------------------------
 Example2:
 
-include "childProj", "anotherChild
+include "childProj", "anotherChild"
 
 subprojects {
 	apply plugin: 'announce'
@@ -29,8 +29,69 @@ project('childProj') {
 ---------------------------------------------
 Example3:
 
-
+shared\src\test\java\org\gradle\shared\PersonTest.java
 
 ---------------------------------------------
 Example4:
 
+inputs.source messageFile
+
+configurations {
+	client
+}
+
+task clientJar(type: Jar) {
+	baseName = 'client'
+	from sourceSets.main.output
+	include '**/Hello.class'
+}
+
+artifacts {
+	client clientJar
+}
+
+compile (project: 'projName' configuration: 'client')
+
+
+apply plugin: GenCodePlugin
+
+class GenCodePlugin implements Plugin<Project> {
+    void apply(Project project) {
+        project.task('genCode') {
+			def messageFile = new File('gen/message.txt')
+			def code = new File('build/gen/Hello.java')
+			
+			outputs.dir code.parentFile
+			
+			doLast {
+				def message = []
+				messageFile.eachLine { line -> message << line }
+
+				code.exists() ? code.delete() : code.parentFile.mkdirs()
+				code << "public class Hello {\n"
+				code << "	public static String getMessage() {\n"
+				code << "		return \"${message.join()}\";\n";
+				code << "	}\n"
+				code << "}"
+			}
+        }
+    }
+}
+
+
+---------------------------------------------
+Example6:
+
+gradle -I init.gradle build
+
+---------------------------------------------
+Example6:
+
+cd package
+gradle build
+cd ../plugin
+gradle uA
+copy dist to $user.home/.gradle/dist
+cd ../project
+gradle build !fails
+gradlew build !fails
