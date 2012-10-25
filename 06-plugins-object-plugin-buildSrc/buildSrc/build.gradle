@@ -1,8 +1,0 @@
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    groovy localGroovy()
-    testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
-}
