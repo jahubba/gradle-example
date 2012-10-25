@@ -1,0 +1,39 @@
+apply plugin: 'java'
+
+sourceSets.main.java {
+	srcDir 'src'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile 'apache:commons'
+
+
+}
+
+task genCode() {
+	def messageFile = new File('gen/message.txt')
+	def message = []
+	messageFile.eachLine { line -> message << line }
+
+	def code = new File('build/gen/Hello.java')
+	code.parentFile.mkdirs()
+	code << "public class Hello {\n"
+	code << "	public static String getMessage() {\n"
+	code << "		return \"${message.join()}\"\n";
+	code << "	}\n"
+	code << "}\n"
+
+	outputs.dir code.parentFile
+}
+
+sourceSets.main.java.source genCode.outputs.dir
+
+task sayHello(type: JavaExec) {
+	classpath configurations.runtime
+	main = Hello
+}
+

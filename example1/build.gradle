@@ -1,0 +1,20 @@
+println "Starting up"
+
+task greetings (dependsOn: ['hello', 'welcome']) {
+	println "create task"
+	doLast {
+		println "  Enjoy."
+	}
+}
+
+task hello
+
+hello {
+	doFirst {
+		print "Hello "
+	}
+}
+
+task welcome << {
+	print ", welcome to gradle."
+}

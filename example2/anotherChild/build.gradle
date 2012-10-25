@@ -1,0 +1,4 @@
+task broken(dependsOn: ':childProj:ok') << {
+	announce.announce("Executing task $name", "local")
+    throw new RuntimeException('broken')
+}

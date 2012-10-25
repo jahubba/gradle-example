@@ -1,0 +1,36 @@
+Example1:
+
+tasks['hello'].doLast {
+	print " Jason"
+}
+
+def name = "Jason"
+
+task welcome(overwrite: true) << {
+	print ", welcome to CinJug"
+}
+
+
+---------------------------------------------
+Example2:
+
+include "childProj", "anotherChild
+
+subprojects {
+	apply plugin: 'announce'
+}
+
+project('childProj') {
+	task ok << {
+		announce.announce("Executing task $name", "local")
+	}
+}
+
+---------------------------------------------
+Example3:
+
+
+
+---------------------------------------------
+Example4:
+
